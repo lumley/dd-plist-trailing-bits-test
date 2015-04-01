@@ -11,15 +11,22 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Load working plist"
+        android:text="No Gzip plist"
         android:id="@+id/button_working_plist"
         android:layout_gravity="center_horizontal" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Load failing plist"
+        android:text="Gzip plist"
         android:id="@+id/button_failing_plist"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gzip plist fixed"
+        android:id="@+id/button_failing_plist_fixed"
         android:layout_gravity="center_horizontal" />
 
     <TextView

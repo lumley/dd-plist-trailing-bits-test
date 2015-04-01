@@ -29,6 +29,9 @@ public class MainActivity extends ActionBarActivity {
     @InjectView(R.id.button_failing_plist)
     Button mButtonFailingPlist;
 
+    @InjectView(R.id.button_failing_plist_fixed)
+    Button mButtonFailingPlistFixed;
+
     @InjectView(R.id.text_message)
     TextView mTextView;
 
@@ -42,16 +45,27 @@ public class MainActivity extends ActionBarActivity {
 
     @OnClick(R.id.button_working_plist)
     public void onLoadWorkingPlistPressed() {
-        final InputStream stream = getResources().openRawResource(R.raw.test_negative_bin);
+        final InputStream stream = getResources().openRawResource(R.raw.test_big_plist);
 
         loadContentsFrom(stream);
     }
 
     @OnClick(R.id.button_failing_plist)
     public void onLoadFailingPlistPressed() {
-        //final InputStream stream = getResources().openRawResource(R.raw.connect);
+        final InputStream stream = getZipStreamFrom(getResources().openRawResource(R.raw.test_big_plist));
 
-        //loadContentsFrom(getZipStreamFrom(stream));
+        loadContentsFrom(stream);
+    }
+
+    @OnClick(R.id.button_failing_plist_fixed)
+    public void onLoadFailingPlistFixedPressed() {
+        final InputStream stream = getZipStreamFrom(getResources().openRawResource(R.raw.test_big_plist));
+
+        try {
+            loadContentsFrom(readAll(stream));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public InputStream getZipStreamFrom(final InputStream inputStream) {
@@ -87,6 +101,7 @@ public class MainActivity extends ActionBarActivity {
 
         String stringToDisplay;
         NSObject result;
+
         try {
             result = BinaryPropertyListParser.parse(stream);
             stringToDisplay = result.toXMLPropertyList();
@@ -97,5 +112,29 @@ public class MainActivity extends ActionBarActivity {
         mTextView.setText(stringToDisplay);
     }
 
+    private void loadContentsFrom(byte[] byteArray) {
+        String stringToDisplay;
+        NSObject result;
+
+        try {
+            result = BinaryPropertyListParser.parse(byteArray);
+            stringToDisplay = result.toXMLPropertyList();
+        } catch (IOException | PropertyListFormatException | OutOfMemoryError e) {
+            stringToDisplay = e.getLocalizedMessage();
+        }
+
+        mTextView.setText(stringToDisplay);
+    }
+
+    protected static byte[] readAll(InputStream in) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        byte[] buf = new byte[2048];
+        int read;
+        while ((read = in.read(buf, 0, buf.length)) != -1) {
+            outputStream.write(buf, 0, read);
+        }
+        return outputStream.toByteArray();
+    }
 
 }
